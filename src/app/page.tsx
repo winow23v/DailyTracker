@@ -1,10 +1,10 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import AuthButton from '@/components/AuthButton'
 import TodoList from '@/components/TodoList'
 import Finance from '@/components/Finance'
-import ExchangeRate from '@/components/ExchangeRate'
 import StockTrades from '@/components/StockTrades'
+import DailySummary from '@/components/DailySummary'
+import DailyMemo from '@/components/DailyMemo'
 
 export default async function Home() {
   const cookieStore = await cookies()
@@ -66,32 +66,48 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center py-16 px-8 sm:py-32 sm:px-16 bg-white dark:bg-black sm:items-start">
-        <div className="w-full flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-                {today}
-            </h1>
-            <AuthButton session={session} />
-        </div>
+    <main className="flex-1 p-6 md:p-8">
+      <div className="w-full max-w-7xl mx-auto space-y-8">
+        <DailySummary dailyPageId={dailyPageId} session={session} />
 
-        <ExchangeRate />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* --- To-Do List (Wider) --- */}
+          <div className="lg:col-span-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-zinc-50">To-Do List</h2>
+              <TodoList dailyPageId={dailyPageId} session={session} pageDate={today} />
+            </div>
+          </div>
 
-        <div className="w-full mt-8">
-            <h2 className="text-2xl font-semibold">To-Do</h2>
-            <TodoList dailyPageId={dailyPageId} session={session} pageDate={today} />
-        </div>
+          {/* --- Finance & Stocks (Stacked) --- */}
+          <div className="flex flex-col gap-8">
+            {/* Finance Card */}
+            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-zinc-50">Finance</h2>
+                <Finance dailyPageId={dailyPageId} session={session} pageDate={today} />
+              </div>
+            </div>
+            {/* Stock Trades Card */}
+            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-zinc-50">Stock Trades</h2>
+                <StockTrades dailyPageId={dailyPageId} session={session} pageDate={today} />
+              </div>
+            </div>
+          </div>
+          
+          {/* --- Daily Memo (Full Width) --- */}
+          <div className="lg:col-span-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-zinc-50">Memo & Reflection</h2>
+              <DailyMemo dailyPageId={dailyPageId} session={session} />
+            </div>
+          </div>
 
-        <div className="w-full mt-8">
-            <h2 className="text-2xl font-semibold">Finance</h2>
-            <Finance dailyPageId={dailyPageId} session={session} pageDate={today} />
         </div>
-
-        <div className="w-full mt-8">
-            <h2 className="text-2xl font-semibold">Stock Trades</h2>
-            <StockTrades dailyPageId={dailyPageId} session={session} pageDate={today} />
-        </div>
-      </main>
-    </div>
+      </div>
+    </main>
   )
 }
