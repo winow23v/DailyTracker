@@ -1,0 +1,5 @@
+.DS_Store
+node_modules
+.next/
+*.env
+life-asset-planner-web/node_modules
