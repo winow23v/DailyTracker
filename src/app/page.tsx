@@ -5,6 +5,7 @@ import Finance from '@/components/Finance'
 import StockTrades from '@/components/StockTrades'
 import DailySummary from '@/components/DailySummary'
 import DailyMemo from '@/components/DailyMemo'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 
 export default async function Home() {
   const cookieStore = await cookies()
@@ -66,48 +67,54 @@ export default async function Home() {
   }
 
   return (
-    <main className="flex-1 p-6 md:p-8">
-      <div className="w-full max-w-7xl mx-auto space-y-8">
-        <DailySummary dailyPageId={dailyPageId} session={session} />
+    <div className="w-full max-w-7xl mx-auto space-y-8">
+      <DailySummary dailyPageId={dailyPageId} session={session} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* --- To-Do List (Wider) --- */}
-          <div className="lg:col-span-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-zinc-50">To-Do List</h2>
-              <TodoList dailyPageId={dailyPageId} session={session} pageDate={today} />
-            </div>
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* --- To-Do List (Wider) --- */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>To-Do List</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TodoList dailyPageId={dailyPageId} session={session} pageDate={today} />
+          </CardContent>
+        </Card>
 
-          {/* --- Finance & Stocks (Stacked) --- */}
-          <div className="flex flex-col gap-8">
-            {/* Finance Card */}
-            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
-              <div className="p-6">
-                <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-zinc-50">Finance</h2>
-                <Finance dailyPageId={dailyPageId} session={session} pageDate={today} />
-              </div>
-            </div>
-            {/* Stock Trades Card */}
-            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
-              <div className="p-6">
-                <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-zinc-50">Stock Trades</h2>
-                <StockTrades dailyPageId={dailyPageId} session={session} pageDate={today} />
-              </div>
-            </div>
-          </div>
-          
-          {/* --- Daily Memo (Full Width) --- */}
-          <div className="lg:col-span-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-sm">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-zinc-50">Memo & Reflection</h2>
-              <DailyMemo dailyPageId={dailyPageId} session={session} />
-            </div>
-          </div>
-
+        {/* --- Finance & Stocks (Stacked) --- */}
+        <div className="flex flex-col gap-8">
+          {/* Finance Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Finance</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Finance dailyPageId={dailyPageId} session={session} pageDate={today} />
+            </CardContent>
+          </Card>
+          {/* Stock Trades Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Stock Trades</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <StockTrades dailyPageId={dailyPageId} session={session} pageDate={today} />
+            </CardContent>
+          </Card>
         </div>
+        
+        {/* --- Daily Memo (Full Width) --- */}
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle>Memo & Reflection</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DailyMemo dailyPageId={dailyPageId} session={session} />
+          </CardContent>
+        </Card>
+
       </div>
-    </main>
+    </div>
   )
 }

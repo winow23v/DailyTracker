@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Session } from '@supabase/supabase-js'
+import { Trash2, Plus } from 'lucide-react'
 
 interface Trade {
   id: number | string;
@@ -113,31 +114,62 @@ export default function StockTrades({ dailyPageId, session, pageDate }: { dailyP
     }
   };
 
+  const inputStyle = "w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500";
+  
   return (
-    <div>
-      <ul>
-        {trades.map((trade) => (
-          <li key={trade.id} className="flex items-center gap-2">
-            <span>{trade.trade_type} {trade.quantity} {trade.ticker} @ {trade.price} {trade.currency}</span>
-            {trade.investment_memos && trade.investment_memos.length > 0 && (
-              <p className="text-sm text-gray-500">Memo: {trade.investment_memos[0].memo}</p>
-            )}
-            <button onClick={() => deleteTrade(trade.id)} className="bg-red-500 text-white p-1">Delete</button>
-          </li>
-        ))}
-      </ul>
-      <form onSubmit={addTrade}>
-        <h4>Add Stock Trade</h4>
-        {/* Form inputs - simplified for brevity */}
-        <input type="text" name="ticker" placeholder="Ticker" className="border p-2" />
-        <select name="market" className="border p-2"><option value="KRX">KRX</option><option value="NASDAQ">NASDAQ</option></select>
-        <select name="trade_type" className="border p-2"><option value="매수">매수</option><option value="매도">매도</option></select>
-        <input type="number" name="quantity" placeholder="Quantity" className="border p-2" />
-        <input type="number" name="price" placeholder="Price" step="0.01" className="border p-2" />
-        <select name="currency" className="border p-2"><option value="KRW">KRW</option><option value="USD">USD</option></select>
-        <textarea name="memo" placeholder="Memo" className="border p-2"></textarea>
-        <button type="submit" className="bg-blue-500 text-white p-2">Add Trade</button>
+    <div className="space-y-6">
+       <form onSubmit={addTrade} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <input type="text" name="ticker" placeholder="Ticker" className={inputStyle} />
+          <select name="market" className={inputStyle}>
+            <option value="KRX">KRX</option>
+            <option value="NASDAQ">NASDAQ</option>
+            <option value="NYSE">NYSE</option>
+          </select>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          <select name="trade_type" className={inputStyle}>
+            <option value="매수">Buy</option>
+            <option value="매도">Sell</option>
+          </select>
+          <input type="number" name="quantity" placeholder="Quantity" className={inputStyle} />
+          <input type="number" name="price" placeholder="Price" step="0.01" className={inputStyle} />
+        </div>
+        <select name="currency" className={inputStyle}>
+            <option value="KRW">KRW</option>
+            <option value="USD">USD</option>
+        </select>
+        <textarea name="memo" placeholder="Why did you make this trade?" className={`${inputStyle} h-24`} />
+        <button type="submit" className="w-full bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900 px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2">
+          <Plus size={16} />
+          Add Trade
+        </button>
       </form>
+
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Today's Trades</h4>
+        <ul className="space-y-2">
+          {trades.map((trade) => (
+            <li key={trade.id} className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800/50">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className={`font-semibold ${trade.trade_type === '매수' ? 'text-green-600' : 'text-red-600'}`}>{trade.trade_type}</span>
+                  <span className="font-bold">{trade.ticker}</span>
+                  <span>{trade.quantity} @ {trade.price.toLocaleString()} {trade.currency}</span>
+                </div>
+                <button onClick={() => deleteTrade(trade.id)} className="text-zinc-500 hover:text-red-500">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+              {trade.investment_memos && trade.investment_memos.length > 0 && (
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 pl-2 border-l-2 border-zinc-200 dark:border-zinc-700">
+                  {trade.investment_memos[0].memo}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }

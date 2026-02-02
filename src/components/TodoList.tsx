@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Session } from '@supabase/supabase-js'
+import { Plus, Trash2 } from 'lucide-react'
 
 interface Todo {
   id: number | string;
@@ -62,7 +63,7 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
     if (session && typeof dailyPageId === 'number') {
       const { data, error } = await supabase
         .from('todos')
-        .insert({ daily_page_id: dailyPageId, task })
+        .insert({ daily_page_id: dailyPageId, task, status: '대기' })
         .select()
         .single();
       if (error) {
@@ -85,7 +86,7 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
     setTask('');
   };
 
-  const handleUpdateTodo = async (id: number | string, newStatus: string) => {
+  const handleUpdateStatus = async (id: number | string, newStatus: string) => {
     if (session) {
       const { error } = await supabase
         .from('todos')
@@ -118,27 +119,42 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
     }
   };
 
+  const toggleTodoCompletion = (id: number | string, currentStatus: string) => {
+    const newStatus = currentStatus === '완료' ? '진행' : '완료';
+    handleUpdateStatus(id, newStatus);
+  };
+
   return (
-    <div>
-      <form onSubmit={handleAddTodo}>
+    <div className="space-y-4">
+      <form onSubmit={handleAddTodo} className="flex gap-2">
         <input 
           type="text" 
           name="task" 
-          className="border p-2" 
+          className="flex-grow bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500"
+          placeholder="Add a new task..."
           value={task}
           onChange={(e) => setTask(e.target.value)}
         />
-        <button type="submit" className="bg-blue-500 text-white p-2">Add</button>
+        <button type="submit" className="bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900 px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
+          <Plus size={16} />
+          Add
+        </button>
       </form>
-      <ul>
+      <ul className="space-y-2">
         {todos.map((todo) => (
-          <li key={todo.id} className="flex items-center gap-2">
-            <span>{todo.task}</span>
+          <li key={todo.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800/50">
+            <input 
+              type="checkbox"
+              checked={todo.status === '완료'}
+              onChange={() => toggleTodoCompletion(todo.id, todo.status)}
+              className="w-4 h-4 text-zinc-600 bg-gray-100 border-gray-300 rounded focus:ring-zinc-500 dark:focus:ring-zinc-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <span className={`flex-grow ${todo.status === '완료' ? 'line-through text-zinc-500' : ''}`}>{todo.task}</span>
             <select 
               name="status" 
               value={todo.status} 
-              className="border p-1"
-              onChange={(e) => handleUpdateTodo(todo.id, e.target.value)}
+              className="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-500"
+              onChange={(e) => handleUpdateStatus(todo.id, e.target.value)}
             >
               <option value="대기">대기</option>
               <option value="진행">진행</option>
@@ -146,9 +162,9 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
             </select>
             <button 
               onClick={() => handleDeleteTodo(todo.id)} 
-              className="bg-red-500 text-white p-1"
+              className="text-zinc-500 hover:text-red-500 dark:hover:text-red-400"
             >
-              Delete
+              <Trash2 size={16} />
             </button>
           </li>
         ))}

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Session } from '@supabase/supabase-js'
+import { SummaryCard } from '@/components/SummaryCard'
+import { DollarSign, CreditCard } from 'lucide-react'
 
 interface DailySummaryProps {
   dailyPageId: number | string;
@@ -54,19 +56,19 @@ export default function DailySummary({ dailyPageId, session }: DailySummaryProps
   }, [dailyPageId, session, supabase]);
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/50">
-        <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300">Total Income</h3>
-        <p className="text-2xl font-semibold text-blue-900 dark:text-blue-200">
-          ₩{totalIncome.toLocaleString()}
-        </p>
-      </div>
-      <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/50">
-        <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Total Expense</h3>
-        <p className="text-2xl font-semibold text-red-900 dark:text-red-200">
-          ₩{totalExpense.toLocaleString()}
-        </p>
-      </div>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <SummaryCard
+        title="Total Income"
+        value={`${totalIncome.toLocaleString()} KRW`}
+        icon={<DollarSign className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />}
+        description="Today's total income"
+      />
+      <SummaryCard
+        title="Total Expense"
+        value={`${totalExpense.toLocaleString()} KRW`}
+        icon={<CreditCard className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />}
+        description="Today's total expense"
+      />
     </div>
   );
 }

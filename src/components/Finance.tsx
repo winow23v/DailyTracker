@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Session } from '@supabase/supabase-js'
+import { Trash2, Plus } from 'lucide-react'
 
 interface Transaction {
   id: number | string;
@@ -43,7 +44,6 @@ const saveLocalFinance = (pageDate: string, data: { incomes?: Income[], expenses
   }
   localStorage.setItem('dailyTracker', JSON.stringify(parsedData));
 };
-
 
 export default function Finance({ dailyPageId, session, pageDate }: { dailyPageId: number | string, session: Session | null, pageDate: string }) {
   const [incomes, setIncomes] = useState<Income[]>([]);
@@ -143,40 +143,71 @@ export default function Finance({ dailyPageId, session, pageDate }: { dailyPageI
     }
   };
 
+  const inputStyle = "w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500";
+
   return (
-    <div>
-      <h3>Incomes</h3>
-      <ul>
-        {incomes.map((income) => (
-          <li key={income.id} className="flex items-center gap-2">
-            <span>{income.amount} {income.currency} - {income.income_type}</span>
-            <button onClick={() => deleteTransaction(income.id, 'income')} className="bg-red-500 text-white p-1">Delete</button>
-          </li>
-        ))}
-      </ul>
-      <h3>Expenses</h3>
-      <ul>
-        {expenses.map((expense) => (
-          <li key={expense.id} className="flex items-center gap-2">
-            <span>{expense.amount} {expense.currency} - {expense.category}</span>
-            <button onClick={() => deleteTransaction(expense.id, 'expense')} className="bg-red-500 text-white p-1">Delete</button>
-          </li>
-        ))}
-      </ul>
-      <form onSubmit={addTransaction}>
-        <h4>Add Transaction</h4>
-        <select name="type" className="border p-2">
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
-        <input type="number" name="amount" placeholder="Amount" className="border p-2" step="0.01" />
-        <select name="currency" className="border p-2">
-          <option value="KRW">KRW</option>
-          <option value="USD">USD</option>
-        </select>
-        <input type="text" name="category" placeholder="Category" className="border p-2" />
-        <button type="submit" className="bg-blue-500 text-white p-2">Add</button>
+    <div className="space-y-6">
+      <form onSubmit={addTransaction} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <select name="type" className={inputStyle}>
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+          <input type="text" name="category" placeholder="Category" className={inputStyle} />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <input type="number" name="amount" placeholder="Amount" className={inputStyle} step="0.01" />
+          <select name="currency" className={inputStyle}>
+            <option value="KRW">KRW</option>
+            <option value="USD">USD</option>
+          </select>
+        </div>
+        <button type="submit" className="w-full bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900 px-4 py-2 rounded-md text-sm font-medium flex items-center justify-center gap-2">
+          <Plus size={16} />
+          Add Transaction
+        </button>
       </form>
+
+      <div className="space-y-4">
+        <div>
+          <h4 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Incomes</h4>
+          <ul className="space-y-2">
+            {incomes.map((income) => (
+              <li key={income.id} className="flex items-center justify-between p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800/50">
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold">{income.amount.toLocaleString()}</span>
+                  <span className="text-xs text-zinc-500">{income.currency}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm">{income.income_type}</span>
+                  <button onClick={() => deleteTransaction(income.id, 'income')} className="text-zinc-500 hover:text-red-500">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-2">Expenses</h4>
+          <ul className="space-y-2">
+            {expenses.map((expense) => (
+              <li key={expense.id} className="flex items-center justify-between p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800/50">
+                <div className="flex items-center gap-3">
+                  <span className="font-semibold">{expense.amount.toLocaleString()}</span>
+                  <span className="text-xs text-zinc-500">{expense.currency}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm">{expense.category}</span>
+                  <button onClick={() => deleteTransaction(expense.id, 'expense')} className="text-zinc-500 hover:text-red-500">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   )
 }

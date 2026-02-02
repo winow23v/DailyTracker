@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Sidebar from "@/components/layout/Sidebar";
-import Header from "@/components/layout/Header";
+import ResponsiveNav from "@/components/layout/ResponsiveNav";
+import TopBar from "@/components/layout/TopBar";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,12 +33,13 @@ export default function RootLayout({
       >
         <ThemeProvider defaultTheme="system" storageKey="life-asset-planner-theme">
           <div className="flex min-h-screen w-full">
-            <Sidebar />
+            <ResponsiveNav />
             <div className="flex flex-col flex-1 w-full">
-              <Header />
-              {children}
+              <TopBar />
+              <main className="flex-1 p-4 sm:p-6">{children}</main>
             </div>
           </div>
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>
