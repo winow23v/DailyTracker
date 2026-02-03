@@ -2,7 +2,7 @@
 
 import { useTheme } from '@/components/providers/ThemeProvider'
 
-export function ThemeToggle() {
+function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
   return (
@@ -40,3 +40,5 @@ function MoonIcon(props: React.SVGProps<SVGSVGElement>) {
         </svg>
     )
 }
+
+export default ThemeToggle;

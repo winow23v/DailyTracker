@@ -1,4 +1,4 @@
-import Finance from '@/components/Finance'
+import TransactionList from '@/components/TransactionList'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
@@ -48,13 +48,9 @@ export default async function MoneyPage() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
+    <div className="w-full max-w-4xl mx-auto space-y-6 p-4">
       <h2 className="text-2xl font-semibold">Money</h2>
-      <div className="grid grid-cols-1 gap-6">
-        <div className="bg-[var(--color-surface)] p-4 rounded-[var(--radius-card)] shadow-sm">
-          <Finance dailyPageId={dailyPageId} session={session} pageDate={today} />
-        </div>
-      </div>
+      <TransactionList dailyPageId={dailyPageId} session={session} pageDate={today} />
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import Link from 'next/link'
 import AuthButton from '@/components/AuthButton'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import ThemeToggle from '@/components/ThemeToggle'
 import { PlusIcon } from 'lucide-react'
 
 export default async function TopBar() {

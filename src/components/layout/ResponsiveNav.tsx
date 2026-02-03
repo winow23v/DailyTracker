@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { HomeIcon, SettingsIcon, PlusIcon, DollarSign, FileText } from 'lucide-react'
+import { HomeIcon, SettingsIcon, DollarSign, GlobeIcon } from 'lucide-react'
 
 // Consolidated main navigation: keep core screens only to reduce clutter
 const navLinks = [
-  { href: '/', label: 'Today', icon: <HomeIcon className="w-5 h-5" /> },
+  { href: '/', label: 'Tasks', icon: <HomeIcon className="w-5 h-5" /> },
   { href: '/money', label: 'Money', icon: <DollarSign className="w-5 h-5" /> },
+  { href: '/market', label: 'Market', icon: <GlobeIcon className="w-5 h-5" /> },
   { href: '/settings', label: 'Settings', icon: <SettingsIcon className="w-5 h-5" /> },
 ]
 
@@ -68,10 +69,6 @@ export default function ResponsiveNav() {
             </Link>
           )
         })}
-        <button className="flex flex-col items-center justify-center gap-1 w-full h-full text-zinc-600 dark:text-zinc-400">
-          <PlusIcon className="w-5 h-5" />
-          <span className="text-xs">Add</span>
-        </button>
       </nav>
     </>
   )

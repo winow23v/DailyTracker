@@ -8,8 +8,10 @@ import { Plus, Trash2 } from 'lucide-react'
 interface Todo {
   id: number | string;
   daily_page_id?: number;
-  task: string;
+  title: string;
   status: string;
+  priority: number;
+  memo: string | null;
   created_at?: string;
 }
 
@@ -32,7 +34,7 @@ const saveLocalTodos = (dailyPageId: string, todos: Todo[]) => {
 
 export default function TodoList({ dailyPageId, session, pageDate }: { dailyPageId: number | string, session: Session | null, pageDate: string }) {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [task, setTask] = useState('');
+  const [title, setTitle] = useState('');
   const supabase = createClient();
 
   useEffect(() => {
@@ -58,12 +60,12 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
 
   const handleAddTodo = async (e: FormEvent) => {
     e.preventDefault();
-    if (!task.trim()) return;
+    if (!title.trim()) return;
 
     if (session && typeof dailyPageId === 'number') {
       const { data, error } = await supabase
         .from('todos')
-        .insert({ daily_page_id: dailyPageId, task, status: '대기' })
+        .insert({ daily_page_id: dailyPageId, title, status: 'pending' })
         .select()
         .single();
       if (error) {
@@ -75,15 +77,17 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
       // Local logic
       const newTodo: Todo = {
         id: new Date().getTime().toString(),
-        task,
-        status: '대기',
+        title,
+        status: 'pending',
+        priority: 1,
+        memo: null,
         created_at: new Date().toISOString(),
       };
       const updatedTodos = [...todos, newTodo];
       setTodos(updatedTodos);
       saveLocalTodos(pageDate, updatedTodos);
     }
-    setTask('');
+    setTitle('');
   };
 
   const handleUpdateStatus = async (id: number | string, newStatus: string) => {
@@ -120,7 +124,7 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
   };
 
   const toggleTodoCompletion = (id: number | string, currentStatus: string) => {
-    const newStatus = currentStatus === '완료' ? '진행' : '완료';
+    const newStatus = currentStatus === 'done' ? 'in_progress' : 'done';
     handleUpdateStatus(id, newStatus);
   };
 
@@ -129,11 +133,11 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
       <form onSubmit={handleAddTodo} className="flex gap-2">
         <input 
           type="text" 
-          name="task" 
+          name="title" 
           className="flex-grow bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500"
           placeholder="Add a new task..."
-          value={task}
-          onChange={(e) => setTask(e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <button type="submit" className="bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900 px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2">
           <Plus size={16} />
@@ -145,20 +149,20 @@ export default function TodoList({ dailyPageId, session, pageDate }: { dailyPage
           <li key={todo.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800/50">
             <input 
               type="checkbox"
-              checked={todo.status === '완료'}
+              checked={todo.status === 'done'}
               onChange={() => toggleTodoCompletion(todo.id, todo.status)}
               className="w-4 h-4 text-zinc-600 bg-gray-100 border-gray-300 rounded focus:ring-zinc-500 dark:focus:ring-zinc-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
-            <span className={`flex-grow ${todo.status === '완료' ? 'line-through text-zinc-500' : ''}`}>{todo.task}</span>
+            <span className={`flex-grow ${todo.status === 'done' ? 'line-through text-zinc-500' : ''}`}>{todo.title}</span>
             <select 
               name="status" 
               value={todo.status} 
               className="bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-500"
               onChange={(e) => handleUpdateStatus(todo.id, e.target.value)}
             >
-              <option value="대기">대기</option>
-              <option value="진행">진행</option>
-              <option value="완료">완료</option>
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="done">Done</option>
             </select>
             <button 
               onClick={() => handleDeleteTodo(todo.id)} 

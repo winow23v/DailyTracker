@@ -20,7 +20,6 @@ const geistMono = Geist_Mono({
 const notoKr = Noto_Sans_KR({
   variable: '--font-noto-kr',
   weight: ['400','700'],
-  subsets: ['latin','korean']
 });
 
 export const metadata: Metadata = {

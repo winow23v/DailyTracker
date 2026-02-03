@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     if (!res.ok) return NextResponse.json({ error: 'fetch failed' }, { status: 502 })
     const data = await res.json()
     return NextResponse.json(data)
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'exception' }, { status: 500 })
   }
 }
