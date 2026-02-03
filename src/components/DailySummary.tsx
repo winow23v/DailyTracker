@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Session } from '@supabase/supabase-js'
-import { SummaryCard } from '@/components/SummaryCard'
-import { DollarSign, CreditCard } from 'lucide-react'
+import SummaryCard from '@/components/ui/SummaryCard'
 
 interface DailySummaryProps {
   dailyPageId: number | string;
@@ -60,14 +59,12 @@ export default function DailySummary({ dailyPageId, session }: DailySummaryProps
       <SummaryCard
         title="Total Income"
         value={`${totalIncome.toLocaleString()} KRW`}
-        icon={<DollarSign className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />}
-        description="Today's total income"
+        sub="Today's total income"
       />
       <SummaryCard
         title="Total Expense"
         value={`${totalExpense.toLocaleString()} KRW`}
-        icon={<CreditCard className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />}
-        description="Today's total expense"
+        sub="Today's total expense"
       />
     </div>
   );

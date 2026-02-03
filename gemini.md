@@ -17,6 +17,25 @@
 
 ---
 
+# 웹·앱 통합 서비스 기획서
+## 서비스명(가칭): Life Asset Planner
+
+---
+
+## 1. 기획 배경 및 문제 정의
+
+### 1.1 기획 배경
+현대 개인 사용자는 다음과 같은 영역을 각각 다른 서비스로 관리하고 있다.
+
+- To-Do / 일정 관리
+- 수입·지출 가계부
+- 환율 계산
+- 주식 투자 기록 (국내 / 미국)
+
+이로 인해 **일상 행동, 소비, 투자 판단이 하나의 흐름으로 연결되지 못하고 단절**된다.
+
+---
+
 ### 1.2 문제 정의
 > “오늘 무엇을 했고,  
 > 얼마를 벌고 쓰고,  
@@ -251,44 +270,144 @@ Daily Page 데이터는 자동으로 누적된다.
 
 > 모든 데이터는 User + DailyPage 기준으로 연결
 
-## 7. 디자인 및 UI/UX 설계
+## 7. 디자인 및 UI/UX 설계 (Vibe 기반 통합 가이드)
 
-`WEB_APP_SCREEN_GUIDE.md` 문서에 정의된 최신 SaaS 및 대시보드 앱/웹 UI/UX 패턴을 따릅니다.
+이 섹션은 UXSnaps의 'Vibe' 코딩 인터페이스에서 얻은 디자인 방향성을 이 프로젝트에 맞게 통합한 가이드입니다. 핵심은 "심도 있는 카드, 부드러운 인터랙션, 명확한 토큰화"입니다.
 
-### 7.1. 핵심 UX 원칙
+### 7.1 핵심 원칙
+- Today 중심: `Today` 뷰를 홈으로 삼아 모든 흐름의 시작점으로 유지합니다.
+- 일관된 구조: Desktop↔Mobile은 정보 구조를 동일하게 유지하되 표현을 최적화합니다.
+- 상태 전환 우선: 전체 페이지 이동 대신 모달·슬라이드·인라인 확장으로 맥락 유지.
+- 미세한 모션: 빠르고 경쾌한 트랜지션(100–200ms), `prefers-reduced-motion` 고려.
 
-- **Today 중심 설계**: `Today` 뷰를 앱의 홈(Home)으로 간주하여 모든 활동의 시작점으로 삼습니다.
-- **반응형 UI/UX**: 데스크톱과 모바일에서 동일한 정보 구조를 유지하되, 화면 크기에 따라 UI 표현 방식을 최적화합니다. (App-Web Common)
-- **상태 전환 중심 인터랙션**: 페이지 전체를 새로고침하는 대신, 모달, 슬라이드 패널, 인라인 확장 등 상태 전환을 통해 맥락을 유지하며 정보를 표시합니다.
+### 7.2 한국형 UI/UX 추가 지침
 
-### 7.2. 화면 레이아웃 (App Shell)
+최근 대한민국에서 많이 채택되는 UI/UX 트렌드를 반영한 추가 지침입니다. 모바일 퍼스트, 엄지 조작성, 간결한 정보 계층, 강한 액션 컬러를 우선으로 합니다.
 
-- **Top Bar (상단 바)**
-  - **역할**: 앱 전체에서 항상 상단에 고정되는 헤더 영역입니다.
-  - **구성**:
-    - **좌측**: 로고 (클릭 시 'Today' 화면으로 이동)
-    - **중앙**: 현재 날짜 표시 (예: `Today · 2026.02.02`)
-    - **우측**: 빠른 입력(Quick Action), 다크/라이트 모드 토글, 프로필 메뉴
-  - **디자인**: 시야 방해를 최소화하기 위해 스크롤 시에는 그림자만 표시합니다. 아이콘을 우선적으로 사용합니다.
+- 타이포그래피: `Noto Sans KR` 계열 권장 — 한글 가독성을 최우선으로 합니다. 본 프로젝트는 `Noto_Sans_KR`를 기본 폰트로 사용합니다.
+- 레이아웃 밀도: 모바일 중심으로 compact하지만, 정보 key는 크게 강조합니다. 리스트 항목은 56px 또는 64px 높이(터치 타깃 권장)로 유지하세요.
+- 네비게이션: 하단 탭 + 중앙 FAB(빠른 입력) 패턴 권장 — 주요 액션은 중앙 FAB로 노출합니다.
+- 액션 컬러: 브랜드 액센트 컬러(Primary)를 버튼과 FAB에 사용하고, 보조 액션은 muted 톤으로 처리합니다.
+- 카드/리스트: 카드의 모서리는 부드러운 반경(8–12px), 그림자 최소화로 평면감 유지. 상세는 토글로 노출.
+- 입력 폼: 큰 입력 필드(높이 44px 이상), 라벨은 간결하게, 화폐/단위는 입력 옆에 명시.
+- 정보 우선순위: 하루의 핵심 수치(오늘의 수입/지출/포트폴리오 변동)는 상단 Summary 카드에 노출하고, 상세 리스트는 접힘으로 제공.
+- 언어/형식: 한국 사용자에게 자연스러운 날짜/통화 표기(YYYY.MM.DD, ₩) 사용.
 
-- **Navigation (탐색)**
-  - **데스크톱 (≥ 1024px)**: 접이식 사이드바 (Collapsible Sidebar)
-    - 기본 상태에서는 아이콘과 텍스트 레이블을 함께 표시하고, 축소 시 아이콘만 표시합니다.
-    - 메뉴: `Today`, `History`, `Reports`, `Settings`
-  - **모바일 (≤ 1023px)**: 하단 탭 네비게이션 (Bottom Navigation)
-    - 주요 메뉴(`Today`, `History`, `Reports`, `Settings`)와 중앙의 추가(`+`) 버튼으로 구성하여 엄지손가락 접근성을 최적화합니다.
+### 7.3 화면별 권장 구성 (Korean pattern)
 
-- **Main Content (중앙 캔버스)**
-  - **Today / Daily Dashboard**: 요약 카드, 타임라인/To-Do 리스트, 접고 펼칠 수 있는 컨텍스트 패널로 구성하여 첫 화면에서 핵심 정보를 파악할 수 있도록 합니다.
-  - **History / Reports**: Today와 동일한 레이아웃 구조를 유지하되, 상단에 날짜/기간 필터를 두어 데이터 조회를 지원합니다.
+- 첫 화면(홈 / Today):
+  - 상단: TopBar (로고 좌측, 중앙 날짜 강조, 우측 FAB/프로필)
+  - 요약 카드: 오늘의 총수입, 총지출, 잔액(큰 숫자)
+  - 주요 액션: '+' FAB로 빠른 입력(수입/지출/주식 기록)
+  - 리스트: To-Do, 최근 거래, 투자인사이트(간결한 라인 아이템)
 
-### 7.3. UI 스타일 가이드
+- 두번째 화면(Stocks / 보유종목):
+  - 상단: 보유 총량/평가손익 요약
+  - 보유 종목 리스트: 각 행에서 `티커 / 수량 / 현재가 / 일중변동(%) / H/L`을 보여줍니다.
+  - 종목 상세: 모달 또는 우측 슬라이드패널로 투자 메모/거래내역 확인
 
-- **레이아웃**: Card 기반 디자인과 8px 그리드 시스템을 사용하여 컴포넌트를 배치하고, 정보 밀도를 조절하기 위해 여백을 충분히 활용합니다.
-- **색상**: `Neutral` 색상을 기본으로 사용하고, 하나의 `Accent` 색상으로 포인트를 줍니다. 다크 모드를 기본으로 지원합니다.
-- **타이포그래피**: 가독성을 우선으로 하여 명확하고 일관된 타이포그래피 시스템을 적용합니다.
-- **CSS**: **Tailwind CSS**를 사용하여 스타일을 구축합니다.
+- 세번째 화면(Memo):
+  - 일별 회고 및 자유 메모
+  - Tag 또는 카테고리로 필터링 가능 (예: 판단, 감정, 회고)
 
+### 7.4 구현 우선순위 (권장)
+- 우선: 모바일 뷰 우선 적용, 핵심 액션(빠른 입력 FAB), 요약 카드 구현
+- 다음: 보유 종목 리스트와 현재가 확인(서버 프록시 사용), 메모 작성/검색
+- 이후: 리포트와 기간별 집계, 리액티브 알림
+
+---
+
+### 7.2 디자인 토큰 (권장 CSS 변수 및 예시)
+- 색상
+  - `--color-bg` : #0f1720 (dark) / #f7fafc (light)
+  - `--color-surface` : #0b1220 (dark) / #ffffff (light)
+  - `--color-muted` : #94a3b8
+  - `--color-accent` : #7c5cff
+  - `--color-success` : #10b981
+  - `--color-warning` : #f59e0b
+  - `--color-danger` : #ef4444
+- 타이포그래피
+  - `--font-sans` (Geist / system) — 폰트 변수는 `src/app/layout.tsx`에서 설정됨
+  - Scale: 14 (base), 16 (body), 20 (h4), 24 (h3), 32 (h2), 40 (h1)
+- 레이아웃
+  - Base spacing: 8px 그리드
+  - Border radius: 8px (cards), 9999px (pill buttons)
+  - Elevation: surface shadow `0 6px 18px rgba(12,18,30,0.18)` (desktop)
+
+### 7.3 주요 컴포넌트 규격
+- TopBar
+  - Height: 56px (mobile 기준)
+  - Sticky, 스크롤 시 subtle shadow
+  - 구성: Left logo, Center 날짜, Right quick actions + theme toggle + profile
+- Sidebar (Desktop)
+  - Expanded width: 260px, Collapsed width: 72px
+  - Item: icon + label (collapsed: icon only, tooltip on hover)
+- Bottom Navigation (Mobile)
+  - Height: 64px, 중앙에 prominent `+` action (FAB 스타일)
+- Card
+  - Padding: 16px (sm) / 24px (lg), border-radius: 12px
+  - Background: `--color-surface`, subtle shadow
+- Buttons
+  - Primary: background `--color-accent`, white text, 12px vertical padding
+  - Ghost: transparent bg, muted text, subtle hover surface
+- Inputs
+  - Height: 44px, border-radius: 8px, focus ring `--color-accent` (2px)
+
+### 7.4 모션 & 인터랙션
+- Transition durations: 120ms (hover), 160ms (slide/expand), easing: cubic-bezier(0.2,0.8,0.2,1)
+- Hover: translateY(-2px) + shadow lift for actionable cards
+- Focus: 2px outline with `--color-accent` (accessible contrast)
+- Reduced motion: respect `prefers-reduced-motion` (no translate, instant toggles)
+
+### 7.5 접근성
+- 컬러 대비: 텍스트 대비 최소 4.5:1 권장
+- 키보드 내비게이션: TopBar quick actions, sidebar items, floating action 버튼에 포커스 스타일 제공
+- ARIA: 모달, 알림, 토스트는 적절한 ARIA 역할 및 live regions 사용
+
+### 7.6 Tailwind (권장 확장 예시)
+Tailwind 설정에 디자인 토큰을 맵핑하면 일관성 유지가 쉬워집니다. 예시(간단):
+
+```js
+// tailwind.config.js (excerpt)
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        accent: 'var(--color-accent)',
+        surface: 'var(--color-surface)',
+        muted: 'var(--color-muted)'
+      },
+      spacing: { 18: '4.5rem' }
+    }
+  }
+}
+```
+
+## Recent Repo Changes (2026-02-03)
+
+- Home / `Today` simplified: now renders only the `TodoList` (daily task focus).
+- `Money` consolidated: finance UI is canonical; stock-related UI was removed from the Money page.
+- Legacy routes: `/finance` and `/stocks` redirect to `/money` (kept as short redirects).
+- `Memo` screen was integrated into Today and the separate `memo` page removed from the main navigation.
+- Dev note: resolved a JS/TS parse error in `src/app/page.tsx` that caused `/` to return 500 during development.
+
+These changes aim to keep "Today" strictly task-focused and "Money" strictly finance-focused, removing duplicate screens and simplifying navigation.
+
+### 7.7 구현 팁 (프로젝트 맥락)
+- `src/app/layout.tsx`가 전역 폰트·토큰을 설정하므로 여기서 토큰 변수를 주입하세요.
+- Tailwind 유틸을 기본으로 사용하되, 복잡한 컴포넌트는 재사용 컴포넌트로 분리 (`src/components/*`).
+- Supabase 관련 UI(로그인, 세션 토스트)는 `src/middleware.ts`와 `src/lib/supabase/client.ts`의 세션 모델을 반영해 동작하도록 구현하세요.
+
+### 7.8 예시: Today 카드 레이아웃 (구성)
+- 상단: Summary Cards (수입/지출, 잔액)
+- 중단: To-Do 타임라인 (우선순위, 상태 토글)
+- 하단: Context Panel (접힘/펼침 가능한 메모, 투자 메모)
+
+### 7.9 디자인 검사 체크리스트 (PR 템플릿 권장)
+- 레이아웃: 8px 그리드 준수
+- 토큰: 색상/간격/타입 변수가 사용되었는가
+- 접근성: 키보드/콘트라스트/ARIA 확인
+- 모션: `prefers-reduced-motion` 고려
 
 ---
 
@@ -326,3 +445,4 @@ Daily Page 데이터는 자동으로 누적된다.
 > “Life Asset Planner는  
 > 하루의 선택과 자산의 흐름을  
 > 웹과 앱에서 함께 기록하는 서비스입니다.”
+

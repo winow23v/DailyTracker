@@ -2,12 +2,12 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { HomeIcon, HistoryIcon, BarChart, SettingsIcon, PlusIcon } from 'lucide-react'
+import { HomeIcon, SettingsIcon, PlusIcon, DollarSign, FileText } from 'lucide-react'
 
+// Consolidated main navigation: keep core screens only to reduce clutter
 const navLinks = [
   { href: '/', label: 'Today', icon: <HomeIcon className="w-5 h-5" /> },
-  { href: '/history', label: 'History', icon: <HistoryIcon className="w-5 h-5" /> },
-  { href: '/reports', label: 'Reports', icon: <BarChart className="w-5 h-5" /> },
+  { href: '/money', label: 'Money', icon: <DollarSign className="w-5 h-5" /> },
   { href: '/settings', label: 'Settings', icon: <SettingsIcon className="w-5 h-5" /> },
 ]
 

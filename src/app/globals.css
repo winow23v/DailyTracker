@@ -3,6 +3,16 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Design tokens (Vibe) */
+  --color-bg: #f7fafc;
+  --color-surface: #ffffff;
+  --color-muted: #94a3b8;
+  --color-accent: #7c5cff;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --radius-card: 12px;
+  --spacing-base: 8px;
 }
 
 @theme inline {
@@ -14,13 +24,37 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f1720;
+    --foreground: #e6eef8;
+    --color-bg: #0f1720;
+    --color-surface: #0b1220;
+    --color-muted: #94a3b8;
+    --color-accent: #7c5cff;
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-noto-kr, Arial, Helvetica, sans-serif);
+}
+
+/* Mobile touch target and spacing helpers */
+.touch-target { min-width: 48px; min-height: 48px; }
+
+@media (max-width: 767px) {
+  :root {
+    --spacing-base: 8px;
+  }
+  /* increase tap targets and spacing on mobile */
+  button, .touch-target { min-width: 56px; min-height: 56px; }
+  .p-4 { padding: 16px !important; }
+  .p-6 { padding: 20px !important; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root { --spacing-base: 10px; }
 }

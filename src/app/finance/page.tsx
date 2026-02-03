@@ -1,9 +1,9 @@
+import Finance from '@/components/Finance'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import TodoList from '@/components/TodoList'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
+import { redirect } from 'next/navigation'
 
-export default async function Home() {
+export default async function FinancePage() {
   const cookieStore = await cookies()
 
   const supabase = createServerClient(
@@ -32,7 +32,6 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0]
 
   let dailyPageId: number | string
@@ -49,16 +48,5 @@ export default async function Home() {
     dailyPageId = today
   }
 
-  return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>To-Do List</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TodoList dailyPageId={dailyPageId} session={session} pageDate={today} />
-        </CardContent>
-      </Card>
-    </div>
-  )
+  redirect('/money')
 }

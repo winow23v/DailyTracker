@@ -1,9 +1,8 @@
+import Finance from '@/components/Finance'
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import TodoList from '@/components/TodoList'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 
-export default async function Home() {
+export default async function MoneyPage() {
   const cookieStore = await cookies()
 
   const supabase = createServerClient(
@@ -32,7 +31,6 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0]
 
   let dailyPageId: number | string
@@ -51,14 +49,12 @@ export default async function Home() {
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>To-Do List</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TodoList dailyPageId={dailyPageId} session={session} pageDate={today} />
-        </CardContent>
-      </Card>
+      <h2 className="text-2xl font-semibold">Money</h2>
+      <div className="grid grid-cols-1 gap-6">
+        <div className="bg-[var(--color-surface)] p-4 rounded-[var(--radius-card)] shadow-sm">
+          <Finance dailyPageId={dailyPageId} session={session} pageDate={today} />
+        </div>
+      </div>
     </div>
   )
 }
